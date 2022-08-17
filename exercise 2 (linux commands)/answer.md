@@ -70,10 +70,10 @@ This command is used to change the mod bits of a file or directory on a linux sy
 
 In this example, I have set and reset the file permission of the `answer.md` file using the `chmod` command. From the image, it can be seen that file is made executable my the user and then unexecutable again.
 
-## 8. ssh: 
-This command is used to access a server remotely and peruse or make changes to it. It requires the username of a user on the server, the IP address of the server and user’s password to successfully enter into the server remotely.
+## 8. ssh (secure shell): 
+This command is used to securely access a server remotely and peruse or make changes to it. It requires the username of a user on the server, the IP address of the server and user’s password to successfully enter into the server remotely.
 
-
+Typical usage => `ssh <username>@<IP address or server name>`. You will then be prompted for the user's password befor being granted access to the server.
 
 ## 9. rmdir: 
 This command is used to remove empty directories.
