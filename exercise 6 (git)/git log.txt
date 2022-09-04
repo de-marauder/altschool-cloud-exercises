@@ -1,0 +1,35 @@
+commit 96d9861a3357d33808b56a14145c54daf9529316 (HEAD -> main, origin/main, origin/HEAD)
+Author: de-marauder <ezikegodson@gmail.com>
+Date:   Sun Sep 4 16:38:49 2022 +0100
+
+    exercise 4
+
+commit 64d981ca090f4682c12fa3325bc27852503a409b
+Author: de-marauder <ezikegodson@gmail.com>
+Date:   Sun Sep 4 10:34:15 2022 +0100
+
+    exercise 3
+
+commit 935296f318733eac05bfa6be9643fc726f01377e
+Author: de-marauder <ezikegodson@gmail.com>
+Date:   Sun Sep 4 10:33:52 2022 +0100
+
+    exercise 1 update
+
+commit 7d89c6a01b1f2eba9f2287c17cf771b4b975aa7f
+Author: de-marauder <ezikegodson@gmail.com>
+Date:   Wed Aug 17 02:01:19 2022 +0100
+
+    updates to exercises
+
+commit 3509dcf613bb13f2dc7f28c5b282b1ace529d581
+Author: De-marauder <65220956+de-marauder@users.noreply.github.com>
+Date:   Wed Aug 17 00:59:22 2022 +0000
+
+    Update answer.md
+
+commit 1bdeaa404735fc9061c86db04e5e5aa77ec2383c
+Author: De-marauder <65220956+de-marauder@users.noreply.github.com>
+Date:   Wed Aug 17 00:33:35 2022 +0000
+
+    Update answer.md
