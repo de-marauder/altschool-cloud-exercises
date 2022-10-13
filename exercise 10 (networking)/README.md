@@ -6,7 +6,7 @@ The Internet is a massive network of machine sharing information between each ot
 
 ## What are IP Addresses?
 
-An IP (Internet Protocol) Address is a group of 32 bits used to identify any machine on the internet. Before a device can access the internet, it must have this address. These IP address are unique so you don't have to worry about your information being misplaced. If it is, it was probably intended by someone to be.
+An IP (Internet Protocol) Address is a group of 32 bits used to identify any machine on the internet or a local network. Before a device can access the internet, it must have this address. These IP address are unique so you don't have to worry about your information being misplaced. If it is, it was probably intended by someone to be.
 
 How do devices get these addresses though?
 
@@ -105,7 +105,12 @@ difference = 32 - 29 = 3
 // the ^ symbol shows the 8th mark
 // Now assign the right and left bit values of 1 and 0 respectively
 
+
 ==> wildcard ==> 00000000.00000000.00000000.00000 ^ 111 ==> 0.0.0.7 
+
+// The net mask can also be represented as the inverse of the wildcard
+==> netmask ==> 11111111.11111111.11111111.11111   ^      000          ==> 255.255.255.248
+               |---------network part-----------|    |---host part---|
 
 // 7 is obtained by converting the binary number 111 on the right hand side to decimal
 
@@ -123,6 +128,7 @@ difference = 32 - 29 = 3
 
 // Count 8 from right to left on the binary IP
 ==> 11000001.00010000.00010100.00100 ^ 011
+// convert right side to 0 bits
 ==> Binary Network IP ==> 11000001.00010000.00010100.00100 ^ 000
 ==> Binary Network IP ==> 11000001.00010000.00010100.00100000
 
@@ -156,11 +162,7 @@ Given IP netmask ==> 193.16.20.35/29
 ==> Number of hosts = 5
 ```
 
+Congratulations! You can now make IP address calculations. 
 
-
-193.16.20.35/29
-
-What is the Network IP, number of hosts, range of IP addresses and broadcast IP from this subnet?
-
-Instruction: Submit all your answer as a markdown file in the folder for this exercise.
-
+## Conclusion
+This article has explained what IP addresses are and how they are distributed and calculated. IP addresses are incredibly important and are the reason machines on the internet can communicate with each other directly. As a network Engineer, it is important to know how to make netmask calculations. Because they are used to setup subnets in a network. 
