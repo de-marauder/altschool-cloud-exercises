@@ -55,6 +55,16 @@ Submit the output of:
 `git remote -v`
 `git log`
 
+## Exercise 8
+
+**Task**:
+
+Create a bash script to run at every hour, saving system memory (RAM) usage to a specified file and at midnight it sends the content of the file to a specified email address, then starts over for the new day.
+
+**Instruction**:
+
+Submit the content of your script, cronjob and a sample of the email sent, all in the folder for this exercise.
+
 ## Exercise 10
 
 **Task**:
@@ -66,3 +76,4 @@ What is the Network IP, number of hosts, range of IP addresses and broadcast IP 
 **Instruction**:
 
 Submit all your answer as a markdown file in the folder for this exercise.
+
