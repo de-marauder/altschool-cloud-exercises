@@ -22,10 +22,10 @@ rewriteDomain=gmail.com
 FromLineOverride=YES
 UseTLS=YES
 ```
-NOTE: 
-	- The username should match an already existing gmail account. 
-	- The account should also have 2 factor authentication enable so that you can generate a password for the `AuthPass` variable. 
-	- If port 465 is unavailable, try 587.
+NOTE:
+- The username should match an already existing gmail account. 
+- The account should also have 2 factor authentication enable so that you can generate a password for the `AuthPass` variable. 
+- If port 465 is unavailable, try 587.
 
 ## Step 3
 Verify your connection using telnet
@@ -33,7 +33,7 @@ Verify your connection using telnet
 telnet smtp.gmail.com 465
 ```
 The result should be as below
---------INSERT IMAGE-------------
+![telnet-connect](https://user-images.githubusercontent.com/65220956/196037019-c9cf984a-0c28-49e4-9d70-dd7b12ac4a91.png)
 
 ## Step 4
 Send an email
