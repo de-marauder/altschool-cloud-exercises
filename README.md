@@ -65,6 +65,23 @@ Create a bash script to run at every hour, saving system memory (RAM) usage to a
 
 Submit the content of your script, cronjob and a sample of the email sent, all in the folder for this exercise.
 
+## Exercise 9
+
+**Task**:
+
+Create an Ansible Playbook to setup a server with Apache
+The server should be set to the Africa/Lagos Timezone
+Host an index.php file with the following content, as the main file on the server:
+
+```php
+<?php
+date("F d, Y h:i:s A e", time());
+?>
+```
+
+**Instruction**:
+Submit the Ansible playbook, the output of systemctl status apache2 after deploying the playbook and a screenshot of the rendered page
+
 ## Exercise 10
 
 **Task**:
@@ -77,3 +94,17 @@ What is the Network IP, number of hosts, range of IP addresses and broadcast IP 
 
 Submit all your answer as a markdown file in the folder for this exercise.
 
+## 2nd Semester Mini-project
+
+**Task**
+Deploy a real life application
+- Demo Project: https://github.com/f1amy/laravel-realworld-example-app
+
+**Instruction**
+
+- Setup Debian 11 on a virtual machine instance with a cloud provider or as instructed
+- Setup Apache with every dependency the application needs to run
+- Don't use Laravel Sail or Docker as suggested in the project README file, simply clone the project with Git and deploy with Apache
+- Setup MySQL with credentials and a database for your application to use
+- Configure a subdomain if you have a domain name to point to the VM instance or speak to an instructor for further guide
+- You have completed the project if you are able to view the application according to the specifications in the project from your Host browser
