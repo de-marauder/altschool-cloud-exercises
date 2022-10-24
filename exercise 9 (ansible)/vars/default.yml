@@ -1,0 +1,6 @@
+---
+mysql_root_password: "marauding*hash"
+http_host: "marauder"
+http_conf: "manpache.conf"
+http_port: "80"
+disable_default: true

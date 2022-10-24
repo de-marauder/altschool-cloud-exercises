@@ -1,0 +1,15 @@
+- hosts: webservers
+  become: true
+  tasks:
+    # Uninstall mysql
+    - name: Purge MySQL & dependencies
+      command: apt purge mysql-server mysql-client mysql-common mysql-server-core-5.5 mysql-client-core-5.5 -y
+
+    - name: Delete conf files
+      command: rm -rf /etc/mysql /var/lib/mysql
+
+    - name: Remove uninstalled packages
+      command: apt autoremove
+
+    - name: Clean up
+      command: apt autoclean
