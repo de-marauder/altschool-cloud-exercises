@@ -1,6 +1,6 @@
 # LAMP on Ubuntu >=18.04
 
-This playbook will install a LAMP environment (**L**inux, **A**pache, **M**ySQL and **P**HP) on an Ubuntu 18.04 machine, as explained in the guide on [How to Use Ansible to Install and Configure LAMP on Ubuntu 18.04](#). A virtualhost will be created with the options specified in the `vars/default.yml` variable file.
+This playbook will install a LAMP environment (**L**inux, **A**pache, **M**ySQL and **P**HP) on an Ubuntu >=18.04 machine. A virtualhost will be created with the options specified in the `vars/default.yml` variable file.
 
 ## Settings
 
