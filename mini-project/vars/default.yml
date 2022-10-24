@@ -1,0 +1,8 @@
+db_root_password: "root"
+#app_user: "vagrant"
+http_host: "laravelapp.com"
+http_conf: "laravelapp.conf"
+http_port: "80"
+disable_default: true
+app_repo_link: 'https://github.com/f1amy/laravel-realworld-example-app.git'
+repo_name: "laravel-realworld-example-app"

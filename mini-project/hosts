@@ -1,0 +1,3 @@
+[webservers]
+52.201.219.43 ansible_user=admin
+
