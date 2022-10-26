@@ -49,3 +49,4 @@ mutt -s "E-mail Subject" -- receiver@gmail < /path/to/file
 
 ## Step 5
 Check and verify mail was sent.
+<img src="./mail-sent.png" alt="mail-pic" />
