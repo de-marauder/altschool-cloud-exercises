@@ -1,0 +1,307 @@
+############################################################################
+# Deploy a laravel application on a debian server
+############################################################################
+
+- hosts: webservers
+  become: true
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+  # Update repositories
+  - name: Update repository cache
+    package:
+      update_cache: true
+
+  # Install Server requirements
+  - name: Install Server requirements
+    package:
+      name: [ 'apache2', 'git', 'npm', 'python3-venv', 'libaugeas0' ]
+      state: present
+
+  # Install php dependencies
+  - name: Installing php dependencies
+    package:
+      name: ['lsb-release', 'ca-certificates', 'apt-transport-https', 'software-properties-common', 'gnupg2']
+      state: present
+
+  - name: Add php repository to package sources
+    shell: echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
+
+  - name: Import php repository key
+    shell:
+      cmd: wget -qO - https://packages.sury.org/php/apt.gpg | sudo apt-key add -
+      warn: false
+
+  # Update repositories
+  - name: Update repository cache
+    package:
+      update_cache: true
+
+  - name: Install php
+    package:
+      name: ['php']
+      state: present
+
+  - name: Install php extensions
+    package:
+      name: ['php-cli', 'php-common', 'php-fpm', 'php-json', 'php-mysql', 'php-zip', 'php-gd', 'php-mbstring', 'php-curl', 'php-xml', 'php-bcmath', 'php-json']
+      state: present
+
+  # Install and configure database
+  - name: Install mariadb
+    package:
+      name: ['mariadb-server', 'mariadb-client', 'python3-mysqldb']
+      state: present
+
+  - name: Set the root password
+    mysql_user:
+      name: admin
+      password: "{{ db_root_password }}"
+      update_password: on_create
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Removes all anonymous user accounts
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+      login_user: admin
+      login_password: "{{ db_root_password }}"
+
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent
+      login_user: admin
+      login_password: "{{ db_root_password }}"
+
+  - name: Create the laravelapp database
+    mysql_db:
+      name: laravelapp
+      state: present
+      login_user: admin
+      login_password: "{{ db_root_password }}"
+
+  # Configure Apache to recognize site
+  - name: Import apache configuration file for HTTP
+    template:
+      src: "files/http.conf"
+      dest: "/etc/apache2/sites-available/{{ http_conf }}"
+
+  - name: Import apache configuration file for HTTPS
+    template:
+      src: "files/https.conf"
+      dest: "/etc/apache2/sites-available/{{ https_conf }}"
+
+  # Enable site
+  - name: Enable new site HTTP
+    shell: /usr/sbin/a2ensite "{{ http_conf }}"
+    notify: Reload Apache
+
+  - name: Enable new site HTTPS
+    shell: /usr/sbin/a2ensite "{{ http_conf }}"
+    notify: Reload Apache
+
+  - name: Disable default Apache site
+    shell: /usr/sbin/a2dissite 000-default.conf
+    notify: Reload Apache
+
+  # Add SSL/TLS certificates
+  - name: Install certbot
+    command: python3 -m venv /opt/certbot/
+  
+  - name: Upgrade pip
+    command: /opt/certbot/bin/pip install --upgrade pip
+  
+  - name: pip install certbot dependencies
+    command: /opt/certbot/bin/pip install certbot certbot-apache
+  
+  - name: Remove certbot to PATH
+    file: 
+      path: /usr/bin/certbot
+      state: absent
+
+  - name: Add certbot to PATH
+    command: ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+  
+  - name: Get SSL certificates with certbot
+    command: certbot --apache -n -d laravelapp.de-marauder.me -m chiezike16@gmail.com --agree-tos
+
+  - name: Reload Apache
+    service:
+      name: apache2
+      state: reloaded
+
+  # Clone laravel app from "{{ app_repo_link }}"
+  - name: Remove unwanted directories
+    command:
+      cmd: rm -rf "{{ repo_name }}"
+      chdir: /var/www/
+      warn: false
+
+  - name: Cloning laravel app from "{{ app_repo_link }}"
+    command: git clone "{{ app_repo_link }}"
+    args:
+      chdir: /var/www/
+
+  # Setup Virtualhost
+  - name: Create site directory
+    file:
+      path: "/var/www/{{ http_host }}"
+      owner: admin
+      group: www-data
+      state: directory
+      mode: 0775
+
+  # Move cloned repo into site directory
+  - name: Copy cloned repo content to site directory /var/www/"{{ http_host }}"
+    command: cp -R . /var/www/"{{ http_host }}"
+    args:
+      chdir: "/var/www/{{ repo_name }}"
+
+  - name: Delete cloned repo
+    command:
+      cmd: rm -rf "/var/www/{{repo_name}}"
+      warn: false
+    args:
+      chdir: /var/www
+
+  - name: Create a .env file
+    file: 
+      path: "/var/www/{{ http_host }}/.env"
+      state: touch
+
+  - name: Add app key environment variable
+    ansible.builtin.blockinfile:
+      path: "/var/www/{{ http_host }}/.env"
+      block: |
+
+        APP_NAME="Laravel Realworld Example App"
+        APP_ENV=local
+        APP_KEY=base64:MlXqEgTHZSkYCbYoPthVZtfJJn4NMvAeUn9uprBpLg8=
+        APP_DEBUG=true
+        APP_URL=http://laravelapp.de-marauder.me
+        APP_PORT=3000
+
+        DB_CONNECTION=mysql
+        DB_HOST=localhost
+        DB_PORT=3306
+        DB_DATABASE=laravelapp
+        DB_USERNAME=root
+        DB_PASSWORD={{ db_root_password }}
+
+        LOG_CHANNEL=stack
+        LOG_DEPRECATIONS_CHANNEL=null
+        LOG_LEVEL=debug
+  
+  - name: Expose Routes
+    ansible.builtin.blockinfile:
+      path: "/var/www/{{ http_host }}/routes/web.php"
+      block: |
+
+        Route::get('/', function () {
+        return view('welcome');
+        });
+
+  - name: Assign file permissions
+    command: find "/var/www/{{ http_host }}" -type f -exec chmod 664 {} \;
+
+  - name: Assign Directory permissions
+    command: find "/var/www/{{ http_host }}" -type d -exec chmod 775 {} \;
+
+  - name: Change group of storage and bootstrap/cache folders
+    command:
+      cmd: chgrp -R www-data storage bootstrap/cache
+      chdir: "/var/www/{{ http_host }}"
+      warn: false
+
+  - name: Assign permissions for storage and bootstrap/cache folders and files
+    command:
+      cmd: chmod -R ug+rwx storage bootstrap/cache
+      chdir: "/var/www/{{ http_host }}"
+      warn: false
+
+  # Install Composer
+  - name: Download Composer installer as composer-setup.php
+    command:
+      cmd: php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      chdir: "/var/www/{{ http_host }}"
+
+  - name: Verify composer setup hash
+    shell:
+      cmd: php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+      chdir: "/var/www/{{ http_host }}"
+    args:
+      executable: /bin/bash
+
+  - name: Run composer setup
+    command:
+      cmd: php composer-setup.php
+      chdir: /var/www/{{ http_host }}
+
+  - name: Unlink composer setup
+    command:
+      cmd: php -r "unlink('composer-setup.php');"
+      chdir: /var/www
+
+  # Add composer to path
+  - name: Add composer to path
+    command: mv composer.phar /usr/local/bin/composer
+    args:
+      chdir: /var/www/{{ http_host }}
+
+  - name: Composer install
+    composer:
+      command: install
+      working_dir: "/var/www/{{ http_host }}"
+    environment:
+      COMPOSER_NO_INTERACTION: "1"
+      COMPOSER_ALLOW_SUPERUSER: "1"
+
+  # Build application
+  # - name: Install packages based on package.json.
+  #   npm:
+  #     path: "/var/www/{{ http_host }}"
+  #     state: present
+
+  # - name: Install dependencies with npm
+  #   command: npm install
+  #   args:
+  #     chdir: "/var/www/{{ http_host }}"
+
+  # - name: Build Application with npm
+  #   command: npm run prod
+  #   args:
+  #     chdir: "/var/www/{{ http_host }}"
+
+  # PHP configurations
+  - name: Generate app key
+    command: php artisan key:generate
+    args:
+      chdir: "/var/www/{{ http_host }}"
+
+  # Migrate DB
+  - name: Migrate Database
+    command: php artisan migrate
+    args:
+      chdir: "/var/www/{{ http_host }}"
+
+
+
+  # Handlers
+  handlers:
+    - name: Reload Apache
+      service:
+        name: apache2
+        state: reloaded
+
+    - name: Restart Apache
+      service:
+        name: apache2
+        state: restarted
+
+    - name: Restart MySQL
+      service:
+        name: mysql
+        state: restarted
