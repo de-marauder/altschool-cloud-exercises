@@ -4,7 +4,7 @@ This playbook will install a LAMP environment (**L**inux, **A**pache, **M**ySQL 
 
 ## Settings
 
-- `mysql_root_password`: the password for the MySQL root account.
+- `db_root_password`: the password for the MySQL root account.
 - `app_user`: a remote non-root user on the Ansible host that will own the application files.
 - `http_host`: your domain name.
 - `http_conf`: the name of the configuration file that will be created within Apache.
@@ -16,12 +16,7 @@ This playbook will install a LAMP environment (**L**inux, **A**pache, **M**ySQL 
 
 Quickstart guide for those already familiar with Ansible:
 
-### 1. Run the playbooks in this order:
-- Install pip
-- Install LAMP
-- Configure apache and database
-
-### 2. Customize Options
+### 1. Customize Options
 
 ```shell
 nano vars/default.yml
@@ -29,7 +24,7 @@ nano vars/default.yml
 
 ```yml
 ---
-mysql_root_password: "mysql_root_password"
+mysql_root_password: "db_root_password"
 app_user: "username"
 http_host: "your_domain"
 http_conf: "your_domain.conf"
@@ -37,9 +32,16 @@ http_port: "80"
 disable_default: true
 ```
 
-### 3. Run the Playbook
+### 2. Run the Playbook
 
 ```command
 ansible-playbook -l [target] -i [inventory file] -u [remote user] playbook.yml
 ```
 
+### 3. Enter server to verify Apache status
+
+<img src="systemctl-timedatectl.png" />
+
+### 3. Check output
+
+<img src="./browser-output.png" alt='output' />

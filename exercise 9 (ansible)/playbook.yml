@@ -1,7 +1,6 @@
-##################################################
-# DO Community Playbooks: LAMP on Ubuntu 18.04
-##################################################
----
+############################################################################
+# Configure a LAMP server
+############################################################################
 
 - hosts: webservers
   become: true
@@ -9,91 +8,109 @@
     - vars/default.yml
 
   tasks:
-  # Update package repositories
-    - name: "Update Repository cache"
-      apt:
-        update_cache: yes
-        force_apt_get: true
+  # Update repositories
+  - name: Update repository cache
+    package:
+      update_cache: true
 
-# Configure apache
-    - name: Create document root
-      file:
-        path: "/var/www/{{ http_host }}"
-        state: directory
-        mode: '0755'
+  # Install Server requirements
+  - name: Install Server requirements
+    package:
+      name: [ 'apache2', 'python3-venv', 'libaugeas0' ]
+      state: present
 
-    - name: Set up Apache virtualhost
-      template:
-        src: "files/apache.conf.j2"
-        dest: "/etc/apache2/sites-available/{{ http_conf }}"
-      notify: Reload Apache
+  # Install php dependencies
+  - name: Installing php dependencies
+    package:
+      name: ['lsb-release', 'ca-certificates', 'apt-transport-https', 'software-properties-common', 'gnupg2']
+      state: present
 
-    - name: Enable new site
-      shell: /usr/sbin/a2ensite {{ http_conf }}
-      notify: Reload Apache
+  - name: Add php repository to package sources
+    shell: echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/sury-php.list
 
-    - name: Disable default Apache site
-      shell: /usr/sbin/a2dissite 000-default.conf
-      when: disable_default
-      notify: Reload Apache
+  - name: Import php repository key
+    shell:
+      cmd: wget -qO - https://packages.sury.org/php/apt.gpg | sudo apt-key add -
+      warn: false
 
+  # Update repositories
+  - name: Update repository cache
+    package:
+      update_cache: true
 
-    - name: Make /root/.my.cnf with password credentials
-      blockinfile:
-        path: /root/.my.cnf
-        block: |
-          [client]
-          user=root
-          password={{ mysql_root_password }}
+  - name: Set timezone
+    command: 
+      cmd: timedatectl set-timezone "Africa/Lagos"
 
-          [mysql]
-          user=root
-          password={{ mysql_root_password }}
+  - name: Install php
+    package:
+      name: ['php']
+      state: present
 
-          [mysqldump]
-          user=root
-          password={{ mysql_root_password }}
+  - name: Install php extensions
+    package:
+      name: ['php-cli', 'php-common', 'php-fpm', 'php-json', 'php-mysql', 'php-zip', 'php-gd', 'php-mbstring', 'php-curl', 'php-xml', 'php-bcmath', 'php-json']
+      state: present
 
-          [mysqldiff]
-          user=root
-          password={{ mysql_root_password }}
-        create: yes
-      notify: Restart MySQL
+  # Install and configure database
+  - name: Install mariadb
+    package:
+      name: ['mariadb-server', 'mariadb-client', 'python3-mysqldb']
+      state: present
 
-    - name: Sets the root password
-      mysql_user:
-        name: root
-        password: "{{ mysql_root_password }}"
-        login_unix_socket: /var/run/mysqld/mysqld.sock
+  - name: Set the root password
+    mysql_user:
+      name: root
+      password: "{{ db_root_password }}"
+      update_password: on_create
+      login_unix_socket: /var/run/mysqld/mysqld.sock
 
-    - name: Removes all anonymous user accounts
-      mysql_user:
-        name: ''
-        host_all: yes
-        state: absent
-        login_user: root
-        login_password: "{{ mysql_root_password }}"
+  - name: Removes all anonymous user accounts
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+      login_user: root
+      login_password: "{{ db_root_password }}"
 
-    - name: Removes the MySQL test database
-      mysql_db:
-        name: test
-        state: absent
-        login_user: root
-        login_password: "{{ mysql_root_password }}"
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent
+      login_user: root
+      login_password: "{{ db_root_password }}"
 
-  # UFW Configuration
-    - name: "UFW - Allow HTTP on port {{ http_port }}"
-      ufw:
-        rule: allow
-        port: "{{ http_port }}"
-        proto: tcp
+  # Configure Apache to recognize site
+  - name: Import apache configuration file for HTTP
+    template:
+      src: "files/apache.conf.j2"
+      dest: "/etc/apache2/sites-available/{{ http_conf }}"
 
-  # PHP Info Page
-    - name: Sets Up PHP Info Page
-      template:
-        src: "files/info.php.j2"
-        dest: "/var/www/{{ http_host }}/info.php"
+  - name: Create Index page
+    file:
+      state: directory
+      path: "/var/www/{{ http_host }}"
 
+  - name: Create Index page
+    template:
+      src: "files/info.php.j2"
+      dest: "/var/www/{{ http_host }}/index.php"
+
+  # Enable site
+  - name: Enable new site HTTP
+    shell: /usr/sbin/a2ensite "{{ http_conf }}"
+    notify: Reload Apache
+
+  - name: Disable default Apache site
+    shell: /usr/sbin/a2dissite 000-default.conf
+    notify: Reload Apache
+
+  - name: Reload Apache
+    service:
+      name: apache2
+      state: reloaded
+
+  # Handlers
   handlers:
     - name: Reload Apache
       service:
@@ -109,4 +126,3 @@
       service:
         name: mysql
         state: restarted
-

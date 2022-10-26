@@ -1,4 +1,2 @@
 [webservers]
-#192.168.56.28 ansible_user=vagrant
-44.211.68.218 ansible_user=ubuntu
-52.87.244.82 ansible_user=admin
+3.85.27.135 ansible_user=admin
