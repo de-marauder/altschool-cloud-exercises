@@ -1,2 +1,5 @@
 ec2-keys
 .env*
+hosts
+default.yml
+
