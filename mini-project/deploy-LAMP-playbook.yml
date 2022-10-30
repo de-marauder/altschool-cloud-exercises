@@ -56,7 +56,7 @@
 
   - name: Set the root password
     mysql_user:
-      name: admin
+      name: root
       password: "{{ db_root_password }}"
       update_password: on_create
       login_unix_socket: /var/run/mysqld/mysqld.sock
@@ -66,21 +66,21 @@
       name: ''
       host_all: yes
       state: absent
-      login_user: admin
+      login_user: root
       login_password: "{{ db_root_password }}"
 
   - name: Removes the MySQL test database
     mysql_db:
       name: test
       state: absent
-      login_user: admin
+      login_user: root
       login_password: "{{ db_root_password }}"
 
   - name: Create the laravelapp database
     mysql_db:
       name: laravelapp
       state: present
-      login_user: admin
+      login_user: root
       login_password: "{{ db_root_password }}"
 
   # Configure Apache to recognize site
@@ -107,31 +107,31 @@
     shell: /usr/sbin/a2dissite 000-default.conf
     notify: Reload Apache
 
-  # Add SSL/TLS certificates
-  - name: Install certbot
-    command: python3 -m venv /opt/certbot/
+  # # Add SSL/TLS certificates
+  # - name: Install certbot
+  #   command: python3 -m venv /opt/certbot/
   
-  - name: Upgrade pip
-    command: /opt/certbot/bin/pip install --upgrade pip
+  # - name: Upgrade pip
+  #   command: /opt/certbot/bin/pip install --upgrade pip
   
-  - name: pip install certbot dependencies
-    command: /opt/certbot/bin/pip install certbot certbot-apache
+  # - name: pip install certbot dependencies
+  #   command: /opt/certbot/bin/pip install certbot certbot-apache
   
-  - name: Remove certbot to PATH
-    file: 
-      path: /usr/bin/certbot
-      state: absent
+  # - name: Remove certbot to PATH
+  #   file: 
+  #     path: /usr/bin/certbot
+  #     state: absent
 
-  - name: Add certbot to PATH
-    command: ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+  # - name: Add certbot to PATH
+  #   command: ln -s /opt/certbot/bin/certbot /usr/bin/certbot
   
-  - name: Get SSL certificates with certbot
-    command: certbot --apache -n -d laravelapp.de-marauder.me -m chiezike16@gmail.com --agree-tos
+  # - name: Get SSL certificates with certbot
+  #   command: certbot --apache -n -d laravelapp.de-marauder.me -m chiezike16@gmail.com --agree-tos
 
-  - name: Reload Apache
-    service:
-      name: apache2
-      state: reloaded
+  # - name: Reload Apache
+  #   service:
+  #     name: apache2
+  #     state: reloaded
 
   # Clone laravel app from "{{ app_repo_link }}"
   - name: Remove unwanted directories

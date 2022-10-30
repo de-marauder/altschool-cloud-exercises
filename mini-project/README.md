@@ -208,6 +208,8 @@ php artisan key:generate
 
 Check your server using it's public IP <http://IP-address>
 
+<img src="./home-url.png" alt="home page" />
+
 ## Step 18
 
 You could decide to configure your DNS on your machine. For this, open the hosts file and add your preferred domain name. **Note** this wont be accesible on the internet.
@@ -229,6 +231,11 @@ Since we are on an EC2 instance you could curl the domain name you just setup to
 curl <domain name>
 ```
 
+---
+
+> On a side note, just because I like you at this point. If you ever need to enter mysql console as mysql root user be sure to use sudo or better yet switch to root user.
+
+---
 
 
 # Automation
