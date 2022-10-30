@@ -219,6 +219,8 @@ php artisan migrate
 
 Check your server using it's public IP <http://IP-address>
 
+<img src="home-url.png" alt="home" />
+
 ## Step 18
 
 You could decide to configure your DNS on your machine. For this, open the hosts file and add your preferred domain name. **Note** this wont be accesible on the internet.
@@ -239,6 +241,10 @@ Since we are on an EC2 instance you could curl the domain name you just setup to
 ```sh
 curl <domain name>
 ```
+
+Alternatively, you could obtain a domain name from any prob=vider of your choice. Then map it to the public IP address of your ec2 instance. To make things more convenient, you could also generate  a static IP address using AWS Elastic IP and then attach your EC2 instance to it. 
+
+You could also opt to make use of AWS route53 for DNS management.
 
 # Automation
 
