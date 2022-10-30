@@ -207,7 +207,8 @@ DB_PASSWORD={{ db_password }}
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=debug```
+LOG_LEVEL=debug
+```
 then, run
 ```sh
 cd /var/www/<site-name>
@@ -242,7 +243,7 @@ Since we are on an EC2 instance you could curl the domain name you just setup to
 curl <domain name>
 ```
 
-Alternatively, you could obtain a domain name from any prob=vider of your choice. Then map it to the public IP address of your ec2 instance. To make things more convenient, you could also generate  a static IP address using AWS Elastic IP and then attach your EC2 instance to it. 
+Alternatively, you could obtain a domain name from any prob=vider of your choice. Then map it to the public IP address of your EC2 instance. To make things more convenient, you could also generate  a static IP address using AWS Elastic IP and then attach your EC2 instance to it. 
 
 You could also opt to make use of AWS route53 for DNS management.
 
