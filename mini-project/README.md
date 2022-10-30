@@ -76,7 +76,10 @@ Setup Database
 - Create new database for our app
 - Reload privilege tables
 
+_Make sure to switch to root user first_
+
 ```sh
+sudo su
 mysql_secure_installation
 ```
 
