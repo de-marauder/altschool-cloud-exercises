@@ -3,6 +3,8 @@
 In this article, I will be detailing how to deploy a laravel application on an aws ec2 instance running a debian OS. The steps however should work on other distros as well. The server configuration will be done using ansible
 The project we shall deploy can be found [here](https://github.com/f1amy/laravel-realworld-example-app)
 
+> Preview of deployed app ==> https://laravelapp.de-marauder.me/
+
 ## Prerequisites
 To follow along with this tutorial, you will need the following:
 - A server or VM running debian or ubuntu
@@ -55,16 +57,22 @@ Install php and php extensions
 ```sh
 sudo apt install php
 
-sudo apt install php-cli php-fpm php-json php-pgsql php-zip php-gd php-mbstring php-curl php-xml php-bcmath php-json
+sudo apt install php-cli php-fpm php-json php-mysql php-zip php-gd php-mbstring php-curl php-xml php-bcmath php-json
 ```
 
 ## Step 6
 
-Install postgresql database. Reference this [script](./postgres-config.sh)
+Setup Database
+- Reset root password
+- Switch to unix socket authentication
+- Remove anonymous users
+- Allow root user to login remotely
+- Remove test database
+- Create new database for our app
+- Reload privilege tables
 
-- Download postgresql from its github repo
-- Make and configure postgres
-- Create a new user and database for our application.
+_Make sure to switch to root user first_
+
 
 ## Step 7
 
@@ -175,6 +183,7 @@ Install project dependencies and run project
 ```sh
 cd /var/www/<site-name>
 composer install
+composer update
 npm install
 npm run prod
 ```
@@ -198,9 +207,9 @@ APP_DEBUG=true
 APP_URL=<domain name>
 APP_PORT=3000
 
-DB_CONNECTION=pgsql
+DB_CONNECTION=mysql
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_DATABASE={{ db_name }}
 DB_USERNAME={{ db_user }}
 DB_PASSWORD={{ db_password }}
@@ -213,7 +222,9 @@ then, run
 ```sh
 cd /var/www/<site-name>
 php artisan key:generate
-php artisan migrate
+php artisan config:cache
+php artisan migrate:fresh
+php artisan migrate --seed
 ```
 
 ## Step 17
@@ -243,7 +254,7 @@ Since we are on an EC2 instance you could curl the domain name you just setup to
 curl <domain name>
 ```
 
-Alternatively, you could obtain a domain name from any prob=vider of your choice. Then map it to the public IP address of your EC2 instance. To make things more convenient, you could also generate  a static IP address using AWS Elastic IP and then attach your EC2 instance to it. 
+Alternatively, you could obtain a domain name from any provider of your choice. Then map it to the public IP address of your EC2 instance. To make things more convenient, you could also generate  a static IP address using AWS Elastic IP and then attach your EC2 instance to it. 
 
 You could also opt to make use of AWS route53 for DNS management.
 
