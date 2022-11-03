@@ -1,4 +1,4 @@
-# How to deploy a laravel application with postgresql database on a debian 11 server
+# How to deploy a laravel application with MySQL database on a debian 11 server
 
 In this article, I will be detailing how to deploy a laravel application on an aws ec2 instance running a debian OS. The steps however should work on other distros as well. The server configuration will be done using ansible
 The project we shall deploy can be found [here](https://github.com/f1amy/laravel-realworld-example-app)
