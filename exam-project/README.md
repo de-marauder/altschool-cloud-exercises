@@ -5,6 +5,8 @@ The project we shall deploy can be found [here](https://github.com/f1amy/laravel
 
 > Preview of deployed app ==> https://laravelapp.de-marauder.me/
 
+> View [Ansible playbook](./deploy-LAPP-bash-playbook.yml)
+
 ## Prerequisites
 To follow along with this tutorial, you will need the following:
 - A server or VM running debian or ubuntu
