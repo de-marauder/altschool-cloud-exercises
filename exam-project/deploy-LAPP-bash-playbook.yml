@@ -1,6 +1,16 @@
-############################################################################
+###########################################################################################################
+# 
 # Deploy a laravel application on a debian server
-############################################################################
+# 
+# This playbook sets up a server with dependencies for a laravel application 
+# cloned from 'https://github.com/f1amy/laravel-realworld-example-app.git'
+# 
+# It sets up a mysql database, configures it and seeds it with data from the application
+# It also provisions the server with a bash script and an SQL file that can be used to 
+# provision a postgresql database. The script lives at /home/postgres
+# This playbook also installs certbot for https (SSL/TLS) encryption 
+# 
+###########################################################################################################
 
 - hosts: webservers
   become: true
@@ -47,7 +57,7 @@
 
   - name: Install php extensions
     package:
-      name: ['php-cli', 'php-common', 'php-fpm', 'php-json', 'php-pgsql', 'php-zip', 'php-gd', 'php-mbstring', 'php-curl', 'php-xml', 'php-bcmath', 'php-json']
+      name: ['php-cli', 'php-common', 'php-fpm', 'php-json', 'php-pgsql', 'php-mysql', 'php-zip', 'php-gd', 'php-mbstring', 'php-curl', 'php-xml', 'php-bcmath', 'php-json']
       state: present
 
   # Copy scripts to download and configure postgresql
@@ -65,17 +75,60 @@
     file:
       path: /home/postgres/postgres-config.sh
       mode: 0777
-  
+
   - name: Copy script to create database and table for app
     template:
       src: create-laravel-db.sql
       dest: "/home/postgres/create-laravel-db.sql"
 
-  - name: Execute postgres-config.sh
-    shell: /home/postgres/postgres-config.sh
+  # Install and configure database
+  - name: Install mariadb
+    package:
+      name: ['mariadb-server', 'mariadb-client', 'python3-mysqldb']
+      state: present
 
-  - name: restart postgres
-    service: name=postgresql state=restarted
+  - name: Set the root password
+    mysql_user:
+      name: root
+      password: "{{ db_root_password }}"
+      update_password: on_create
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Transfer root user credentials
+    template:
+      src: "files/.my.cnf"
+      dest: "/root/.my.cnf"
+
+  - name: Removes all anonymous user accounts
+    mysql_user:
+      name: ''
+      host_all: yes
+      state: absent
+      login_user: root
+      login_password: "{{ db_root_password }}"
+
+  - name: Removes the MySQL test database
+    mysql_db:
+      name: test
+      state: absent
+      login_user: root
+      login_password: "{{ db_root_password }}"
+
+  - name: Create laravelapp user
+    mysql_user:
+      name: "{{ db_user }}"
+      password: "{{ db_user_password }}"
+      update_password: on_create
+      priv: "{{ db_name }}.*:ALL"
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Create the laravelapp database
+    mysql_db:
+      name: laravelapp
+      state: present
+      login_user: "{{ db_user }}"
+      login_password: "{{ db_user_password }}"
+
 
   # Configure Apache to recognize site
   - name: Import apache configuration file for HTTP
@@ -101,26 +154,32 @@
     shell: /usr/sbin/a2dissite 000-default.conf
     notify: Reload Apache
 
+  - name: Enable apache rewrite modifier
+    shell: /usr/sbin/a2enmod rewrite
+    notify: Reload Apache
+
   # Add SSL/TLS certificates
   - name: Install certbot
     command: python3 -m venv /opt/certbot/
-  
+
   - name: Upgrade pip
     command: /opt/certbot/bin/pip install --upgrade pip
-  
+
   - name: pip install certbot dependencies
     command: /opt/certbot/bin/pip install certbot certbot-apache
-  
+
   - name: Remove certbot to PATH
-    file: 
+    file:
       path: /usr/bin/certbot
       state: absent
 
   - name: Add certbot to PATH
-    command: ln -s /opt/certbot/bin/certbot /usr/bin/certbot
-  
+    command:
+      cmd: ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+      warn: false
+
   - name: Get SSL certificates with certbot
-    command: certbot --apache -n -d laravelapp.de-marauder.me -m chiezike16@gmail.com --agree-tos
+    command: certbot --apache -n -d {{ server_name }} -m {{ email }} --agree-tos
 
   - name: Reload Apache
     service:
@@ -162,7 +221,7 @@
       chdir: /var/www
 
   - name: Create a .env file
-    file: 
+    file:
       path: "/var/www/{{ http_host }}/.env"
       state: touch
 
@@ -178,17 +237,22 @@
         APP_URL=http://laravelapp.de-marauder.me
         APP_PORT=3000
 
-        DB_CONNECTION=pgsql
+        DB_CONNECTION=mysql
         DB_HOST=localhost
-        DB_PORT=5432
+        DB_PORT=3306
         DB_DATABASE={{ db_name }}
         DB_USERNAME={{ db_user }}
-        DB_PASSWORD={{ db_password }}
+        DB_PASSWORD={{ db_user_password }}
 
         LOG_CHANNEL=stack
         LOG_DEPRECATIONS_CHANNEL=null
         LOG_LEVEL=debug
-  
+
+  - name: Change directory owner
+    command:
+      cmd: chown -R admin:www-data "/var/www/{{ http_host }}"
+      warn: false
+
   - name: Expose Routes
     ansible.builtin.blockinfile:
       path: "/var/www/{{ http_host }}/routes/web.php"
@@ -253,21 +317,10 @@
       COMPOSER_NO_INTERACTION: "1"
       COMPOSER_ALLOW_SUPERUSER: "1"
 
-  # Build application
-  # - name: Install packages based on package.json.
-  #   npm:
-  #     path: "/var/www/{{ http_host }}"
-  #     state: present
-
-  # - name: Install dependencies with npm
-  #   command: npm install
-  #   args:
-  #     chdir: "/var/www/{{ http_host }}"
-
-  # - name: Build Application with npm
-  #   command: npm run prod
-  #   args:
-  #     chdir: "/var/www/{{ http_host }}"
+  - name: Composer update
+    command: composer update -n
+    args:
+      chdir: "/var/www/{{ http_host }}"
 
   # PHP configurations
   - name: Generate app key
@@ -276,8 +329,18 @@
       chdir: "/var/www/{{ http_host }}"
 
   # Migrate DB
+  - name: Cache config
+    command: php artisan config:cache
+    args:
+      chdir: "/var/www/{{ http_host }}"
+
   - name: Migrate Database
-    command: php artisan migrate
+    command: php artisan migrate:fresh
+    args:
+      chdir: "/var/www/{{ http_host }}"
+
+  - name: Seed Database
+    command: php artisan migrate --seed
     args:
       chdir: "/var/www/{{ http_host }}"
 

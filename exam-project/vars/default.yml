@@ -1,15 +1,21 @@
-db_root_password: "root"
-#app_user: "vagrant"
 server_name: "laravelapp.de-marauder.me"
+email: "chiezike16@gmail.com"
 http_host: "laravelapp.com"
+
 http_conf: "laravelapp.conf"
 https_conf: "laravelapp-ssl.conf"
+
 http_port: "80"
 https_port: "443"
+
 disable_default: true
+
 app_repo_link: 'https://github.com/f1amy/laravel-realworld-example-app.git'
 repo_name: "laravel-realworld-example-app"
 
 db_password: "postgres"
 db_name: laravelapp
 db_user: laravelapp_user
+
+db_root_password: "root"
+db_user_password: "laravelapp_user"

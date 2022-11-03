@@ -299,6 +299,11 @@
       chdir: "/var/www/{{ http_host }}"
 
   # Migrate DB
+  - name: Seed Database
+    command: php artisan db:seed
+    args:
+      chdir: "/var/www/{{ http_host }}"
+
   - name: Migrate Database
     command: php artisan migrate
     args:
