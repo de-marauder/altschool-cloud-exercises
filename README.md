@@ -153,3 +153,35 @@ __
 
 Best of luck!
 
+---
+
+## 3rd Semester Holiday Project
+
+**Task**
+
+Setup and automate the provisioning and configuration of a load balancer
+
+**Question**
+
+Setup a logical Network and load balancer within it to route traffic to two replicas which show the hostname of the individual replicas
+
+**Requirements**
+
+- We should be able to access your deployment using a domain name of your choice or the load balancers URL(not an IP address).
+- We should not be able to reach your replicas from outside your network
+- Your base url must show the replicas hostname
+- Your application must be encrypted with TLS/SSL.
+- You may or may not define a autoscaling rules.
+
+Submission
+
+- Push your code to GitHub (for those that automated)
+- Share your github link on the shared document.
+- Share your cloud credentials.
+- Submit the load balancer URL
+
+<br>
+
+<br>
+
+Best of luck!
