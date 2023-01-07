@@ -3,3 +3,5 @@ ec2-keys
 hosts
 default.yml
 
+vars.sh
+altschool-server-key.pem
