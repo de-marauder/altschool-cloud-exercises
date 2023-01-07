@@ -646,12 +646,13 @@ echo
 echo
 echo '1. VERIFY THAT ALL SERVICES ARE RUNNING ON THE AWS CONSOLE'
 echo '2. NAVIGATE INTO "ansible/" DIRECTORY'
-echo "3. RUN ansible-playbook bastion-playbook.yml --private-key ../$KEY_NAME.pem -i hosts"
+echo "3. RUN THE PLAYBOOK TO CONFIGURE YOUR BASTION
+echo "   ansible-playbook bastion-playbook.yml --private-key ../$KEY_NAME.pem -i hosts"
 echo '4. AFTER THAT RUN THE ANSIBLE PLAYBOOK TO CONFIGURE THE BASTION'
 echo '5. OBTAIN THE PUBLIC IP OF THE BASTION FROM THE "hosts" file or from the "vars.sh" file'
 echo '6. SSH INTO THE BASTION USING THE GENERATED "server-key.pem" FILE '
 echo "   ssh -i $KEY_NAME.pem ubuntu@$BASTION_PUBLIC_IP"
 echo '7. NAVIGATE TO THE "ansible" DIRECTORY ON THE UBUNTU USER DIRECTORY'
 echo '   cd ansible/'
-echo '8. RUN ANOTHER PLAYBOOK  TO CONFIGURE THE REPLICAS'
-echo "9. ansible-playbook replica-playbook.yml --private-key ../$KEY_NAME.pem -i hosts"
+echo '8. RUN ANOTHER PLAYBOOK TO CONFIGURE THE REPLICAS'
+echo "   ansible-playbook replica-playbook.yml --private-key ../$KEY_NAME.pem -i hosts"
