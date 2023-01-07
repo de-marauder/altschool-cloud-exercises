@@ -1,0 +1,92 @@
+#############################################################################
+# Configure a replica webserver with NGINX to show the hostname of the server
+#############################################################################
+
+- hosts: replica
+  become: true
+  vars_files:
+    - vars/variables.yml
+
+  tasks:
+    # Update repositories
+    - name: Update repository cache
+      package:
+        update_cache: true
+
+    # Install server requirements
+    - name: Install server requirements
+      package:
+        name:
+          ["nginx", "git", "ca-certificates", "curl", "gnupg", "lsb-release"]
+        state: present
+
+    - name: Install NVM
+      shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+      become: false
+
+    # Clone git repository
+    - name: Delete git repository
+      file:
+        path: "{{home_dir}}/altschool-project/"
+        state: absent
+
+    - name: Clone git repository
+      command: git clone {{ project_repo }}
+
+    - name: transfer the hostname script
+      template:
+        src: files/hostname.sh
+        dest: "{{home_dir}}/hostname.sh"
+
+    - name: make hostname executable
+      file:
+        path: "{{home_dir}}/hostname.sh"
+        mode: +x
+
+    - name: write .env file
+      shell: bash "{{home_dir}}/hostname.sh"
+
+    # Start app
+    - name: Install app dependencies and start app
+      shell: |
+        /bin/bash -c "
+        cd {{home_dir}}/ && source {{home_dir}}/.nvm/nvm.sh && nvm install 18
+        chown -R {{ansible_user}} {{home_dir}}
+        npm i -g serve
+        cd {{home_dir}}/altschool-project/ && npm i -f
+        cd {{home_dir}}/altschool-project/ && npm run build && serve -s dist/ -l 5173 &"
+      register: shell_output1
+      args:
+        executable: /bin/bash
+
+    - debug: var=shell_output1
+
+    # Configure NGINX
+    - name: Unlink default nginx conf
+      shell: |
+        [ -f /etc/nginx/sites-enabled/default ] && unlink /etc/nginx/sites-enabled/default || echo "File does not exist"
+      register: shell_output2
+      args:
+        executable: /bin/bash
+
+    - debug: var=shell_output2
+
+    # Enable site with nginx
+    - name: Transfer nginx config for app
+      template:
+        src: files/nginx.conf
+        dest: /etc/nginx/sites-available/{{ project_conf }}
+
+    - name: Link altschool-project nginx conf
+      shell: |
+        [ -f /etc/nginx/sites-enabled/{{ project_conf }} ] && echo "File exist" || $(ln -s "/etc/nginx/sites-available/{{ project_conf }}" "/etc/nginx/sites-enabled/{{ project_conf }}")
+      register: shell_output3
+      args:
+        executable: /bin/bash
+
+    - debug: var=shell_output3
+
+    - name: Reload NGINX
+      service:
+        name: nginx
+        state: reloaded

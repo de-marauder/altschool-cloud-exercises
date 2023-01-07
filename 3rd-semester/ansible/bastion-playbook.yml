@@ -1,0 +1,54 @@
+---
+- name: Install Ansible on bastion
+  hosts: bastion
+  become: yes
+  vars_files: vars/variables.yml
+  tasks:
+    # Update repositories
+    - name: Update repository cache
+      package:
+        update_cache: true
+
+    # Install server dependencies
+    - name: Install dependencies
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - build-essential
+          - libssl-dev
+          - curl
+          - python3-pip
+    
+    - name: Transfer replica setup playbook
+      become: false
+      copy:
+        src: ../ansible
+        dest: $HOME
+        owner: ubuntu
+        group: ubuntu
+    
+    - name: Transfer private key
+      become: false
+      template:
+        src: "../altschool-server-key.pem"
+        dest: $HOME
+        owner: ubuntu
+        group: ubuntu
+        mode: 0400
+
+    - name: Install ansible
+      command: python3 -m pip install --user ansible
+      become: false
+
+    - name: Add ansible commands to PATH
+      shell: |
+        /bin/bash -c "
+        echo 'export PATH=$PATH:/home/ubuntu/.local/bin' >> $HOME/.bashrc
+        source $HOME/.bashrc"
+      become: false
+      args:
+        executable: /bin/bash
+      register: shell_output
+
+    - debug: var=shell_output

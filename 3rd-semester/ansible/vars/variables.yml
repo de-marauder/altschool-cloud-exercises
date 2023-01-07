@@ -1,0 +1,5 @@
+http_host: "my-site.com"
+project_conf: "my-site.conf"
+http_port: "80"
+project_repo: "https://github.com/de-marauder/altschool-project.git"
+home_dir: /home/ubuntu
