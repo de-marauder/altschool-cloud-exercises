@@ -10,7 +10,7 @@
 ## Packages required
 - AWS CLI (properly configured with administrative access)
 - jq
-- ansible
+- ansible (configured to run the `ansible-playbook` command)
 
 ## Steps
 - Create a VPC with 3 subnets. 
@@ -36,8 +36,7 @@ cd path/to/this/directory/on/your/machine
 cd ansible
 ansible-playbook bastion-playbook.yml --private-key ../${KEY_NAME}.pem -i hosts
 ```
-> Further instructions are present after you've successfully spun up your resources.
-> Make sure to answer yes when prompted to add your keys.
+> Make sure to answer yes when prompted to add your keys. Further instructions are present after you've successfully spun up your resources.
 
 After your bastion is configured, you'll have to ssh into it an configure your replicas
 ```
