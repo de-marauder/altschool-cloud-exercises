@@ -256,10 +256,6 @@ KEY_PAIR=$(
   aws ec2 describe-key-pairs --key-name $KEY_NAME
 )
 
-# PRIV_KEY=$(echo $KEY_PAIR | jq -r .KeyMaterial)
-# echo $PRIV_KEY > ./server-key.pem
-# echo 'private-key = ' $PRIV_KEY
-
 KEY_PAIR_ID=$(echo $KEY_PAIR | jq -r .KeyPairs[0].KeyPairId)
 echo $KEY_PAIR | jq -r
 echo 'key-pair-name = ' $KEY_NAME
