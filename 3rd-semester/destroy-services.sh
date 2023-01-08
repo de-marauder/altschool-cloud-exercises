@@ -1,4 +1,4 @@
-##### CLEAN UP #####
+##### THIS SCRIPT DELETES ALL RESOURCES PROVISIONED BY THE 'provision.sh' SCRIPT #####
 
 ## Run commands in the following order replacing all values as necessary
 echo 'deleting instances'
