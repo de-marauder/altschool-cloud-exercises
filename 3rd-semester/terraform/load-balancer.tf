@@ -8,8 +8,6 @@ resource "aws_lb" "altschool-lb" {
   subnets = [
     aws_subnet.altschool-pub-subnet-1.id,
     aws_subnet.altschool-pub-subnet-2.id,
-    aws_subnet.altschool-priv-subnet-1.id,
-    aws_subnet.altschool-priv-subnet-2.id,
   ]
 
 }

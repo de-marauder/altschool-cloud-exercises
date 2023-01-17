@@ -36,7 +36,6 @@ resource "aws_security_group" "altschool-priv-sg" {
     to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = [aws_vpc.altschool-vpc.cidr_block]
-    ipv6_cidr_blocks = [aws_vpc.altschool-vpc.ipv6_cidr_block]
   }
 
   ingress {
@@ -45,7 +44,6 @@ resource "aws_security_group" "altschool-priv-sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.altschool-vpc.cidr_block]
-    ipv6_cidr_blocks = [aws_vpc.altschool-vpc.ipv6_cidr_block]
   }
 
   ingress {
@@ -54,7 +52,6 @@ resource "aws_security_group" "altschool-priv-sg" {
     to_port          = 80
     protocol         = "tcp"
     cidr_blocks = [aws_vpc.altschool-vpc.cidr_block]
-    ipv6_cidr_blocks = [aws_vpc.altschool-vpc.ipv6_cidr_block]
   }
 
   egress {
