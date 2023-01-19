@@ -1,6 +1,6 @@
 # How to create a load balancer that sits in front of a VPC and routes traffic to available servers in it's private subnet using TERRAFORM.
 
-<img src='./Load balancer architecture altschool project.drawio.png' alt='Network Architecture'/>
+<img src='../bash/Load balancer architecture altschool project.drawio.png' alt='Network Architecture'/>
 
 <!-- ![Load balancer architecture altschool project drawio](https://user-images.githubusercontent.com/65220956/211167637-65c2945e-74fe-4556-9fdc-7813bd40ddae.png) -->
 
