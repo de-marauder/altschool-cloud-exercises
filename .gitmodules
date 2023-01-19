@@ -1,0 +1,3 @@
+[submodule "3rd-semester/3rd-semester/provision-load-balancer-for-priv-subnets-aws/altschool-project"]
+	path = 3rd-semester/3rd-semester/provision-load-balancer-for-priv-subnets-aws/altschool-project
+	url = https://github.com/de-marauder/altschool-project.git
