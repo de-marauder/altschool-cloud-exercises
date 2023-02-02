@@ -16,3 +16,6 @@ output "replica_1_ip" {
 output "replica_2_ip" {
   value = aws_instance.altschool-replica["2"].public_ip
 }
+output "replica_3_ip" {
+  value = aws_instance.altschool-replica["3"].public_ip
+}

@@ -1,0 +1,32 @@
+############################################################################
+# Setup Apache on an ubuntu server
+############################################################################
+
+- hosts: web_servers
+  become: true
+
+  tasks:
+  # Update repositories
+  - name: Update repository cache
+    package:
+      update_cache: true
+
+  # Install Server requirements
+  - name: Install Server requirements
+    package:
+      name: [ 'apache2', 'libaugeas0' ]
+      state: present
+
+  # Configure Apache to recognize site
+  - name: Import apache configuration file for HTTP
+    template:
+      src: "files/index.sh"
+      dest: $HOME
+      mode: 0700
+      owner: ubuntu
+
+  # Change server time to Africa/Lagos
+  # Echo that into the index.html file for apache
+  # Echo hostname into the index.html file for apache
+  - name: Set timezone and update index.html
+    command: "bash $HOME/index.sh"

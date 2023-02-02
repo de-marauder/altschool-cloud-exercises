@@ -45,7 +45,10 @@ variable "instance_count" {
 variable "keypair_filename" {
   type    = string
   default = "altschool-keypair-tf"
-
+}
+variable "key_dir" {
+  type    = string
+  default = "./"
 }
 
 variable "route53_zone_dns" {
@@ -55,7 +58,7 @@ variable "route53_zone_dns" {
 }
 variable "subdomain_host" {
   type    = string
-  default = "app"
+  default = "terraform-test"
 
 }
 

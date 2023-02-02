@@ -12,5 +12,6 @@ resource "tls_private_key" "rsa" {
 
 resource "local_file" "altschool-keypair" {
   content  = tls_private_key.rsa.private_key_pem
-  filename = var.keypair_filename
+  filename = "${var.key_dir}${var.keypair_filename}"
+  file_permission = 0400
 }
