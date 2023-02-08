@@ -25,7 +25,7 @@
    ```
 6. Create database user and assign privileges
    ```bash
-   docker exec -it db 
+   docker exec -it db bash
    ```
    then,
    ```bash
