@@ -12,8 +12,8 @@
    ```
 2. Using the compose image, run a container with a binded mount to install application dependencies and run updates
    ```bash
-   docker run -it --name compose --rm -v $(pwd):/app compose install
-   docker run -it --name compose --rm -v $(pwd):/app compose update
+   docker run -it --name compose --rm -v $(pwd):/app composer install
+   docker run -it --name compose --rm -v $(pwd):/app composer update
    ```
 3. Write the docker-compose.yml file. There will be 3 services (containers). One for the laravel application, one for the database and one for our web server (nginx). It should look like [this](./docker-compose.yml). The services are connected together by a custom bridge network (this allows containers to reference themselves using their names as a DNS). Data mounts are also attached to transfer the application after it has been built to the webserver service. Volumes are also mounted for transfering database log data. 
 4. Write a [Dockerfile](./Dockerfile) for the laravel app using the `php:fpm` base image. It should look like [this](./Dockerfile)
