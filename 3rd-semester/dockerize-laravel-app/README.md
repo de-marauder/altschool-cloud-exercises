@@ -6,9 +6,11 @@
 
 ## Procedure
 
-1. Clone laravel app git repo
+1. Clone laravel app git repo and create the `.env` file
    ```bash
    git clone https://github.com/de-marauder/laravelapp.git
+   cd laravelapp
+   nano .env
    ```
 2. Using the compose image, run a container with a binded mount to install application dependencies and run updates
    ```bash
