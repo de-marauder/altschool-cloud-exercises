@@ -6,7 +6,7 @@
 
 ## Procedure
 
-1. Clone laravel app git repo and create the `.env` file
+1. Clone laravel app git repo and create the [`.env` file](./.env)
    ```bash
    git clone https://github.com/de-marauder/laravelapp.git
    cd laravelapp
