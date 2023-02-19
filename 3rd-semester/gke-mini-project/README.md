@@ -10,39 +10,39 @@ This article describes how to use GKE to deploy a highly available application
 1. Create a GKE cluster using the gcloud CLI tool
    ```bash
    gcloud container clusters create-auto helloworld-gke \
-  --region $REGION
+    --region $REGION
    ```
 
 2. Confirm cluster creation
-  ```bash
-  kubectl get nodes
-  ```
+    ```bash
+    kubectl get nodes
+    ```
 
 3. Write a deployment configuration [like this](./deployment.yaml) and apply it to the cluster nodes
-  ```bash
-  kubectl apply -f deployment.yaml
-  ```
+    ```bash
+    kubectl apply -f deployment.yaml
+    ```
 
 4. Confirm deployment
    ```bash
    kubectl get deployments
    kubectl get pods
    ```
-<img src="./assets/pods.png" alt="pods" />
-<img src="./assets/deployments.png" alt="deployments" />
+    <img src="./assets/pods.png" alt="pods" />
+    <img src="./assets/deployments.png" alt="deployments" />
 
 5. Write a service configuration [like this](./service.yaml) and apply it to the cluster nodes
-  ```bash
-  kubectl apply -f service.yaml
-  ```
+    ```bash
+    kubectl apply -f service.yaml
+    ```
 
 6. Confirm service application
    ```bash
    kubectl get svc
    kubectl get nodes
    ```
-<img src="./assets/services.png" alt="services" />
-<img src="./assets/nodes.png" alt="nodes" />
+    <img src="./assets/services.png" alt="services" />
+    <img src="./assets/nodes.png" alt="nodes" />
 
 7. View deployed application
    ```bash
