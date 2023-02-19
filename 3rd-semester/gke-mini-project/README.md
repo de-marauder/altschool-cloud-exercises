@@ -28,8 +28,8 @@ This article describes how to use GKE to deploy a highly available application
    kubectl get deployments
    kubectl get pods
    ```
-<img src="./assests/pods.png" alt="pods" />
-<img src="./assests/deployments.png" alt="deployments" />
+<img src="./assets/pods.png" alt="pods" />
+<img src="./assets/deployments.png" alt="deployments" />
 
 5. Write a service configuration [like this](./service.yaml) and apply it to the cluster nodes
   ```bash
@@ -41,8 +41,8 @@ This article describes how to use GKE to deploy a highly available application
    kubectl get svc
    kubectl get nodes
    ```
-<img src="./assests/services.png" alt="services" />
-<img src="./assests/nodes.png" alt="nodes" />
+<img src="./assets/services.png" alt="services" />
+<img src="./assets/nodes.png" alt="nodes" />
 
 7. View deployed application
    ```bash
@@ -52,7 +52,7 @@ This article describes how to use GKE to deploy a highly available application
    ```
 
 # Results
-<img src="./assests/portfolio.png" alt="portfolio-image" />
+<img src="./assets/portfolio.png" alt="portfolio-image" />
 
 
 # Troubleshooting

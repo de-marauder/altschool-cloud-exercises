@@ -10,3 +10,5 @@ altschool-server-key.pem
 terraform.tfstate
 terraform.tfstate.backup
 #.terraform.lock.hcl
+
+.vagrant
