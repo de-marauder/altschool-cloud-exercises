@@ -1,3 +1,6 @@
 [submodule "3rd-semester/provision-load-balancer-for-priv-subnets-aws/altschool-project"]
 	path = 3rd-semester/provision-load-balancer-for-priv-subnets-aws/altschool-project
 	url = https://github.com/de-marauder/altschool-project.git
+[submodule "3rd-semester/exam"]
+	path = 3rd-semester/exam
+	url = https://github.com/de-marauder/kubernetes-terraform-CI-CD.git

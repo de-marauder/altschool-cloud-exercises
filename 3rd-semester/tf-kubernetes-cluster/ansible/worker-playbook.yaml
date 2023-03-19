@@ -13,3 +13,10 @@
       register: shell_output
 
     - debug: var=shell_output
+
+    # - name: Set path to kube config
+    #   shell: |
+    #     export KUBECONFIG=/etc/kubernetes/admin.conf
+    #     echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >>~/.bashrc
+    #     echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >>/home/ubuntu/.bashrc
+    #     kubectl apply -f https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml
