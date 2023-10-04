@@ -186,8 +186,6 @@ Install project dependencies and run project
 cd /var/www/<site-name>
 composer install
 composer update
-npm install
-npm run prod
 ```
 
 ## Step 15
